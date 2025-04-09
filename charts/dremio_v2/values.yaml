@@ -33,6 +33,15 @@ podLabels: {}
 nodeSelector: {}
 tolerations: []
 
+monitoring:
+  # When enabled the coordinator, executors and zookeeper will export Prometheus metrics on port 9010
+  enabled: false
+
+  podMonitor:
+    # When enabled PodMonitors for coordinator, executors and zookeeper will be deployed
+    # Requires to have monitoring.enabled set to true
+    enabled: false
+
 # Dremio Coordinator
 coordinator:
   # CPU & Memory

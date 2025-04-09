@@ -74,6 +74,11 @@ spec:
             -Dservices.executor.enabled=true
             -Dservices.conduit.port=45679
             -Dservices.node-tag={{ $engineName }}
+            {{- if $.Values.monitoring.enabled }}
+            -Dservices.web-admin.port=9010
+            -Dservices.web-admin.enabled=true
+            -Dservices.web-admin.host=0.0.0.0
+            {{- end }}
             -XX:ActiveProcessorCount={{ include "dremio.executor.activeProcessorCount" (list $ $engineName) }}
         - name: AWS_CREDENTIAL_PROFILES_FILE
           value: "/opt/dremio/aws/credentials"
@@ -84,6 +89,10 @@ spec:
         command: ["/opt/dremio/bin/dremio"]
         args: ["start-fg"]
         ports:
+        {{- if $.Values.monitoring.enabled }}
+        - containerPort: 9010
+          name: prometheus
+        {{- end }}
         - containerPort: 45678
           name: server-fabric
         - containerPort: 45679

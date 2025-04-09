@@ -69,6 +69,11 @@ spec:
             -Dservices.coordinator.master.embedded-zookeeper.enabled=false
             -Dservices.executor.enabled=false
             -Dservices.conduit.port=45679
+            {{- if $.Values.monitoring.enabled }}
+            -Dservices.web-admin.port=9010
+            -Dservices.web-admin.enabled=true
+            -Dservices.web-admin.host=0.0.0.0
+            {{- end }}
             -XX:ActiveProcessorCount={{- include "dremio.coordinator.activeProcessorCount" $ }}
         - name: AWS_CREDENTIAL_PROFILES_FILE
           value: "/opt/dremio/aws/credentials"
@@ -79,6 +84,10 @@ spec:
         command: ["/opt/dremio/bin/dremio"]
         args: ["start-fg"]
         ports:
+        {{- if $.Values.monitoring.enabled }}
+        - containerPort: 9010
+          name: prometheus
+        {{- end }}
         - containerPort: 31010
           name: client
         - containerPort: 32010
